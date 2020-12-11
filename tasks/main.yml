@@ -1,0 +1,9 @@
+---
+- name: Setup Wireguard
+  import_tasks: setup.yml
+
+- name: Generate Wireguard keys
+  import_tasks: keys.yml
+  
+- name: Generate Wireguard config
+  import_tasks: conf.yml

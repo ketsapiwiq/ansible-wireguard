@@ -1,0 +1,29 @@
+[Interface]
+Address = {{ wireguard_vpn_ip }}
+PrivateKey = {{ wireguard_privatekey.content | b64decode | trim }}
+
+{% if wireguard_post_up %}
+PostUp = {{ wireguard_post_up }}
+{% endif %}
+{% if wireguard_post_down %}
+PostDown = {{ wireguard_post_down }}
+{% endif %}
+
+{% if wireguard_role == "server" %}
+ListenPort = {{ wireguard_port }}
+{% endif %}
+
+{% if wireguard_mtu is defined %}
+MTU = {{ wireguard_mtu }}
+{% endif %}
+
+{% for node in play_hosts %}
+{% if inventory_hostname != hostvars[node]['inventory_hostname'] %}
+[Peer]
+PublicKey = {{ hostvars[node].wireguard_publickey.content | b64decode | trim }}
+AllowedIPs = {{ hostvars[node].wireguard_vpn_ip }}
+{% if hostvars[node]['wireguard_role'] == "server" %}
+Endpoint = {{ hostvars[node]['ansible_host'] | default(hostvars[node]['inventory_hostname']) }}:{{ wireguard_port }}
+{% endif %}
+{% endif %}
+{% endfor %}

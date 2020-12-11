@@ -1,0 +1,13 @@
+---
+wireguard_port: "5888"
+wireguard_path: "/etc/wireguard"
+
+wireguard_network_name: "private"
+
+wireguard_role: "server"
+
+# debian_enable_backports: true
+# debian_pin_packages: true
+
+wireguard_post_up: false
+wireguard_post_down: false

@@ -1,0 +1,22 @@
+---
+- name: Read private key
+  stat:
+    path: "{{ wireguard_path }}/privatekey"
+  register: wireguard_privatekey
+
+- name: Generate wireguard keys
+  shell: set -o pipefail && \
+         umask 077; wg genkey | tee {{ wireguard_path  }}/privatekey | wg pubkey > {{ wireguard_path }}/publickey
+  args:
+    executable: /bin/bash
+  when: not wireguard_privatekey.stat.exists
+
+- name: Read private key
+  slurp:
+    src: "{{ wireguard_path }}/privatekey"
+  register: wireguard_privatekey
+
+- name: Read public key
+  slurp:
+    src: "{{ wireguard_path }}/publickey"
+  register: wireguard_publickey
